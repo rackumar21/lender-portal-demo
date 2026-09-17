@@ -50,11 +50,25 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
     const expectedNumber = expectedParts[1]
     const expectedTerm = expectedParts[2]
 
-    const isValidPolicy = 
+    // Name the empty field rather than reporting a generic miss — a blank State
+    // is by far the most common reason this lookup fails.
+    const missing = [
+      !state && "State",
+      !policyNumber.trim() && "Number",
+      !term.trim() && "Term",
+      !zipCode.trim() && "Zip code",
+    ].filter(Boolean)
+
+    if (missing.length) {
+      setError(`Enter ${missing.join(", ")} to search.`)
+      return
+    }
+
+    const isValidPolicy =
       state === expectedState &&
-      policyNumber === expectedNumber &&
-      term === expectedTerm &&
-      zipCode === "98706"
+      policyNumber.trim() === expectedNumber &&
+      term.trim() === expectedTerm &&
+      zipCode.trim() === "98706"
 
     if (isValidPolicy) {
       setPolicyFound(true)
@@ -125,9 +139,11 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                       name="state"
                       value={state}
                       onChange={(e) => setState(e.target.value)}
-                      className="h-6 w-full border border-border bg-card px-1 text-xs text-foreground focus:border-primary focus:outline-none"
+                      className={`h-6 w-full border bg-card px-1 text-xs focus:border-primary focus:outline-none ${
+                        state ? "border-border text-foreground" : "border-primary/50 text-muted-foreground"
+                      }`}
                     >
-                      <option value=""></option>
+                      <option value="">Select</option>
                       {US_STATES.map((s) => (
                         <option key={s} value={s}>
                           {s}
