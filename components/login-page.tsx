@@ -138,10 +138,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             <Lock className="w-3.5 h-3.5" />
             <span>Secured with 256-bit SSL encryption</span>
           </div>
-
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            Demo credentials: demo@getstrada.com / getstrada
-          </p>
         </div>
       </main>
     </div>

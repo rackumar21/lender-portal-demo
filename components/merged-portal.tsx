@@ -4,13 +4,6 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { policyData } from "@/lib/policy-data"
 import { TopNav } from "@/components/top-nav"
 import { Sidebar, type SectionId } from "@/components/sidebar"
@@ -122,17 +115,25 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                 <Label className="text-xs font-bold">Policy number</Label>
                 <div className="flex items-end gap-0.5">
                   <div className="flex-1 space-y-0">
-                    <span className="text-xs text-muted-foreground leading-3">State</span>
-                    <Select value={state} onValueChange={setState}>
-                      <SelectTrigger className="w-full h-6 bg-card text-xs">
-                        <SelectValue placeholder="" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-40">
-                        {US_STATES.map((s) => (
-                          <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <label htmlFor="state" className="block text-xs text-muted-foreground leading-3">
+                      State
+                    </label>
+                    {/* A native select on purpose: the styled Select widget drops
+                        programmatic and some real clicks, which breaks browser agents. */}
+                    <select
+                      id="state"
+                      name="state"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      className="h-6 w-full border border-border bg-card px-1 text-xs text-foreground focus:border-primary focus:outline-none"
+                    >
+                      <option value=""></option>
+                      {US_STATES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <span className="text-muted-foreground text-xs pb-0.5">-</span>
                   <div className="flex-[3] space-y-0">
@@ -169,10 +170,6 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                   </Button>
                 </div>
               </div>
-
-              <p className="text-xs text-muted-foreground leading-3 mt-1">
-                Demo: AZ-5969302-01, zip &quot;98706&quot;
-              </p>
             </form>
 
             {/* Dashboard Content */}
