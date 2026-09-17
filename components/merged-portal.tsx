@@ -41,7 +41,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
 
   const showRightRail = activeSection === "summary"
 
-  const handleLookupSubmit = (e: React.FormEvent) => {
+  const handleLookupSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError("")
 
@@ -50,13 +50,24 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
     const expectedNumber = expectedParts[1]
     const expectedTerm = expectedParts[2]
 
-    // Name the empty field rather than reporting a generic miss — a blank State
-    // is by far the most common reason this lookup fails.
+    // Read straight off the form, same as the login page does. Chrome restores
+    // form values on reload and autofills without firing React's onChange, so
+    // the field can show a value while React state is still empty.
+    const form = e.currentTarget
+    const fieldValue = (name: string) =>
+      ((form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null)?.value ?? "").trim()
+
+    const stateValue = fieldValue("state") || state
+    const numberValue = fieldValue("policyNumber") || policyNumber.trim()
+    const termValue = fieldValue("term") || term.trim()
+    const zipValue = fieldValue("zipCode") || zipCode.trim()
+
+    // Name the empty field rather than reporting a generic miss.
     const missing = [
-      !state && "State",
-      !policyNumber.trim() && "Number",
-      !term.trim() && "Term",
-      !zipCode.trim() && "Zip code",
+      !stateValue && "State",
+      !numberValue && "Number",
+      !termValue && "Term",
+      !zipValue && "Zip code",
     ].filter(Boolean)
 
     if (missing.length) {
@@ -65,10 +76,10 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
     }
 
     const isValidPolicy =
-      state === expectedState &&
-      policyNumber.trim() === expectedNumber &&
-      term.trim() === expectedTerm &&
-      zipCode.trim() === "98706"
+      stateValue === expectedState &&
+      numberValue === expectedNumber &&
+      termValue === expectedTerm &&
+      zipValue === "98706"
 
     if (isValidPolicy) {
       setPolicyFound(true)
@@ -155,6 +166,8 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                   <div className="flex-[3] space-y-0">
                     <span className="text-xs text-muted-foreground leading-3">Number</span>
                     <Input
+                      id="policyNumber"
+                      name="policyNumber"
                       value={policyNumber}
                       onChange={(e) => setPolicyNumber(e.target.value)}
                       placeholder="10011001"
@@ -165,6 +178,8 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                   <div className="flex-1 space-y-0">
                     <span className="text-xs text-muted-foreground leading-3">Term</span>
                     <Input
+                      id="term"
+                      name="term"
                       value={term}
                       onChange={(e) => setTerm(e.target.value)}
                       placeholder="00"
@@ -175,6 +190,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                     <span className="text-xs text-muted-foreground leading-3">Zip code</span>
                     <Input
                       id="zipCode"
+                      name="zipCode"
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
                       placeholder="00000"
