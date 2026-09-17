@@ -145,14 +145,15 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                     </label>
                     {/* A native select on purpose: the styled Select widget drops
                         programmatic and some real clicks, which breaks browser agents. */}
+                    {/* Uncontrolled on purpose. A browser agent sets .value without
+                        firing change, and a controlled select would re-assert the old
+                        value on the next render, wiping the selection. */}
                     <select
                       id="state"
                       name="state"
-                      value={state}
+                      defaultValue=""
                       onChange={(e) => setState(e.target.value)}
-                      className={`h-6 w-full border bg-card px-1 text-xs focus:border-primary focus:outline-none ${
-                        state ? "border-border text-foreground" : "border-primary/50 text-muted-foreground"
-                      }`}
+                      className="h-6 w-full border border-border bg-card px-1 text-xs text-foreground focus:border-primary focus:outline-none"
                     >
                       <option value="">Select</option>
                       {US_STATES.map((s) => (
@@ -168,7 +169,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                     <Input
                       id="policyNumber"
                       name="policyNumber"
-                      value={policyNumber}
+                      defaultValue=""
                       onChange={(e) => setPolicyNumber(e.target.value)}
                       placeholder="10011001"
                       className="w-full h-6 bg-card text-xs"
@@ -180,7 +181,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                     <Input
                       id="term"
                       name="term"
-                      value={term}
+                      defaultValue=""
                       onChange={(e) => setTerm(e.target.value)}
                       placeholder="00"
                       className="w-full h-6 bg-card text-xs"
@@ -191,7 +192,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                     <Input
                       id="zipCode"
                       name="zipCode"
-                      value={zipCode}
+                      defaultValue=""
                       onChange={(e) => setZipCode(e.target.value)}
                       placeholder="00000"
                       className="h-6 bg-card text-xs w-full"
