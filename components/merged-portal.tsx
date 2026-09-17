@@ -105,7 +105,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
               <h1 className="text-sm font-bold text-foreground">
                 Lender Inquiry and Requests
               </h1>
-              <p className="text-xs text-muted-foreground leading-3">
+              <p className="text-xs text-muted-foreground leading-snug">
                 Streamline your work with our lender portal. Access policy documents, request coverage or mortgagee clause changes, and make payments all in one place.
               </p>
             </div>
@@ -113,7 +113,7 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
             {/* Lookup Form */}
             <form onSubmit={handleLookupSubmit} className="text-left bg-card border border-border p-2 w-full max-w-2xl mb-1">
               {error && (
-                <div className="p-1 text-xs text-destructive bg-destructive/10 leading-3 mb-1">
+                <div className="p-1 text-xs text-destructive bg-destructive/10 leading-snug mb-1">
                   {error}
                 </div>
               )}

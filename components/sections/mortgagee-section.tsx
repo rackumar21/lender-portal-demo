@@ -5,6 +5,7 @@ import { policyData } from "@/lib/policy-data"
 import { SectionCard, FieldRow, FieldGrid, StatusPill } from "@/components/portal-ui"
 import { Landmark, Pencil, Check } from "lucide-react"
 import { readLienholders, writeLienholders, type Lienholder } from "@/lib/lienholder-store"
+import { notify } from "@/lib/notifications-store"
 
 const seeded: Lienholder[] = policyData.mortgages.map((m) => ({
   name: m.name,
@@ -48,11 +49,18 @@ export function MortgageeSection() {
 
   const saveEdit = () => {
     if (draft === null || editingIndex === null) return
+    const previousName = lienholders[editingIndex].name
     const next = lienholders.map((l, i) => (i === editingIndex ? draft : l))
     setLienholders(next)
     writeLienholders(next)
     cancelEdit()
     setToast("Lienholder updated")
+    notify(
+      "Lienholder updated",
+      previousName === draft.name
+        ? `${draft.name} details updated on policy ${policyData.policyNumber}.`
+        : `${previousName} replaced with ${draft.name} on policy ${policyData.policyNumber}.`,
+    )
   }
 
   return (

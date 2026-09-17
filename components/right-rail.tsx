@@ -57,7 +57,7 @@ export function RightRail({ onSectionChange }: RightRailProps) {
                   <span className="font-bold text-foreground">{note.author}</span>
                   <span>{formatDateShort(note.date)}</span>
                 </div>
-                <p className="text-xs text-foreground leading-3 mt-0">{note.text}</p>
+                <p className="text-xs text-foreground leading-snug mt-0.5">{note.text}</p>
               </div>
             </div>
           ))}

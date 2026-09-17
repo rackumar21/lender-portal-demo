@@ -14,12 +14,12 @@ export function SummarySection() {
 
   return (
     <div className="space-y-0.5">
-      <div className="flex items-center justify-between gap-1 pb-1 border-b border-border flex-wrap">
-        <div>
-          <h1 className="text-sm font-bold text-foreground leading-3">
+      <div className="flex items-center justify-between gap-1 py-1.5 border-b border-border flex-wrap">
+        <div className="space-y-0.5">
+          <h1 className="text-sm font-bold text-foreground leading-tight">
             Policy Summary: {policyData.policyNumber}
           </h1>
-          <p className="text-xs text-muted-foreground mt-0 leading-2">
+          <p className="text-xs text-muted-foreground leading-tight">
             {policyData.product} &middot; {policyData.offering}
           </p>
         </div>

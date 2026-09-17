@@ -1,7 +1,15 @@
 "use client"
 
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { ShieldCheck, ChevronDown, Search, Settings, Bell, LogOut } from "lucide-react"
 import { policyData, userData } from "@/lib/policy-data"
+import {
+  subscribe as subscribeNotifications,
+  getSnapshot as getNotifications,
+  getServerSnapshot as getServerNotifications,
+  markAllRead,
+  clearAll,
+} from "@/lib/notifications-store"
 
 const NAV_MENUS = [
   "File", "Edit", "Areas", "Home", "Locate", "Actions", "Real-Time",
@@ -43,12 +51,7 @@ export function TopNav({ onLogout }: TopNavProps) {
         </nav>
 
         <div className="flex items-center gap-0.5 shrink-0">
-          <button
-            className="p-1 rounded-none text-muted-foreground hover:bg-secondary hover:text-foreground"
-            aria-label="Notifications"
-          >
-            <Bell className="w-3.5 h-3.5" />
-          </button>
+          <NotificationBell />
           <button
             className="p-1 rounded-none text-muted-foreground hover:bg-secondary hover:text-foreground"
             aria-label="Settings"
@@ -98,5 +101,90 @@ export function TopNav({ onLogout }: TopNavProps) {
         </span>
       </div>
     </header>
+  )
+}
+
+function NotificationBell() {
+  const notifications = useSyncExternalStore(
+    subscribeNotifications,
+    getNotifications,
+    getServerNotifications,
+  )
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const unread = notifications.filter((n) => !n.read).length
+
+  // Close on outside click so the panel doesn't trap a browser agent mid-run.
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", onDown)
+    return () => document.removeEventListener("mousedown", onDown)
+  }, [open])
+
+  const toggle = () => {
+    const next = !open
+    setOpen(next)
+    if (next) markAllRead()
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={toggle}
+        data-testid="notifications-button"
+        data-unread-count={unread}
+        aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}
+        className="relative p-1 rounded-none text-muted-foreground hover:bg-secondary hover:text-foreground"
+      >
+        <Bell className="w-3.5 h-3.5" />
+        {unread > 0 && (
+          <span
+            data-testid="notifications-badge"
+            className="absolute -top-0.5 -right-0.5 flex h-3 min-w-3 items-center justify-center bg-destructive px-0.5 text-[9px] font-bold leading-none text-white"
+          >
+            {unread}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div
+          data-testid="notifications-panel"
+          className="absolute right-0 top-full z-50 mt-1 w-72 border border-border bg-card shadow-lg"
+        >
+          <div className="flex items-center justify-between border-b border-border bg-secondary px-2 py-1">
+            <span className="text-xs font-bold uppercase tracking-wide">Notifications</span>
+            {notifications.length > 0 && (
+              <button
+                onClick={clearAll}
+                data-testid="notifications-clear"
+                className="text-xs font-bold text-primary hover:underline"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          {notifications.length === 0 ? (
+            <p className="px-2 py-3 text-center text-xs text-muted-foreground">No notifications</p>
+          ) : (
+            <ul className="max-h-64 divide-y divide-border overflow-y-auto">
+              {notifications.map((n) => (
+                <li key={n.id} className="px-2 py-1.5">
+                  <div className="text-xs font-bold text-foreground">{n.title}</div>
+                  <div className="text-xs leading-snug text-muted-foreground">{n.body}</div>
+                  <div className="mt-0.5 text-[10px] text-muted-foreground">
+                    {new Date(n.timestamp).toLocaleString()}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
