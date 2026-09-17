@@ -24,7 +24,9 @@ export function TopNav({ onLogout }: TopNavProps) {
   return (
     <header className="bg-card border-b border-border">
       {/* Top row: brand + menus + utilities */}
-      <div className="flex items-center gap-1 px-2 h-10 overflow-x-auto">
+      {/* overflow-x-auto lives on the nav, not this row — on the row it would
+          clip the notifications dropdown to the 40px header height. */}
+      <div className="flex items-center gap-1 px-2 h-10">
         <div className="flex items-center gap-1.5 shrink-0">
           <ShieldCheck className="w-5 h-5 text-primary" />
           <span className="text-xs font-semibold text-foreground tracking-tight whitespace-nowrap">
@@ -32,7 +34,7 @@ export function TopNav({ onLogout }: TopNavProps) {
           </span>
         </div>
 
-        <nav className="flex items-center gap-0 flex-1">
+        <nav className="flex items-center gap-0 flex-1 min-w-0 overflow-x-auto">
           {NAV_MENUS.map((menu) => {
             const isActive = menu === "Policy"
             const hasCaret = !["Search", "SMS"].includes(menu)
