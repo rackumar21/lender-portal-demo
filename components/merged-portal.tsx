@@ -170,6 +170,10 @@ export default function MergedPortal({ onLogout }: MergedPortalProps) {
                   </Button>
                 </div>
               </div>
+
+              <p className="text-xs text-muted-foreground leading-snug mt-1">
+                Demo: AZ-5969302-01, zip &quot;98706&quot;
+              </p>
             </form>
 
             {/* Dashboard Content */}
